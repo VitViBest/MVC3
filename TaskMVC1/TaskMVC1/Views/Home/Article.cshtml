@@ -1,0 +1,22 @@
+﻿@model TaskMVC1.Models.Home.ArticleVM
+
+@{
+    ViewBag.Title = "Article";
+}
+
+<div class="row" style="min-height:90vh; padding:10px; box-sizing:border-box;">
+    <div class="col-md-6 col-lg-6">
+        <img style="width:100%;" class=" sticky-top" src="@String.Format("data:image/gif;base64,{0}",Convert.ToBase64String(Model.Article.Photo))" />
+    </div>
+    <div class="col-md-6 col-lg-6">
+        <h3>@Model.Article.Title</h3>
+        <h6 class="text-right">@Model.Article.Date.ToString("dd.MM.yyyy")</h6>
+        @foreach (var i in Model.Article.Kinds)
+        {
+            <span class="text-danger">#@i.Name</span>
+        }
+        <hr />
+        <p>@Model.Article.Text</p>
+
+    </div>
+</div>

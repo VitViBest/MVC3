@@ -1,0 +1,80 @@
+﻿@model TaskMVC1.Models.Home.HomeIndexVM
+@using TaskMVC1.Helpers
+@{
+    ViewBag.Title = "Мустанги";
+}
+
+@Styles.Render("~/Content/index")
+
+<div id="row" class="row">
+    <div class="col-12 text-right" style="margin-top:10px;">
+        <a href="@Url.Action("Index","Home", new { toOlder=true})" class="btn btn-dark">От новых</a>
+        <a href="@Url.Action("Index","Home", new { toOlder=false})" class="btn btn-dark">От старых</a>
+        <hr />
+    </div>
+
+    @foreach (var i in Model.Articles)
+    {
+        <div class="col-md-4 col-sm-6 article-preview">
+            <div>
+                <div class="text-right article-date">
+                    @i.Date.ToString("dd.MM.yyyy")
+                </div>
+                <div class="article-name">
+                    @i.Title
+                </div>
+            </div>
+            <div>
+                <img class="images" src="@String.Format("data:image/gif;base64,{0}",Convert.ToBase64String(i.Photo))" />
+            </div>
+            <div class="text-justify">
+                <p>
+                    @i.Text
+                    <a href="@Url.Action("Article","Home",new { id=i.Id})" class="btn btn-outline-primary">Подробнее</a>
+                </p>
+            </div>
+        </div>
+    }
+</div>
+<div style="margin-bottom:10px">
+    <div class="btn-group">
+        @Html.PageLinks(Model.PageInfo, x => Url.Action("Index", "Home", new { page = x,toOlder=Model.ToOlder }))
+    </div>
+</div>
+
+
+@section Votes{
+    @if (Model.IsVoted)
+    {
+        <fieldset>
+            <legend class="text-light">
+                Результаты
+            </legend>
+            <ul class="list-group">
+                @foreach (var i in Model.Votes)
+                {
+                    <li class="list-group-item">@i.Name: @i.Count</li>
+                }
+            </ul>
+        </fieldset>
+    }
+    else
+    {
+        using (Html.BeginForm("Vote", "Home", FormMethod.Post))
+        {
+            <div class="text-left">
+                @foreach (var i in Model.Votes)
+                {
+                    <div class="form-check">
+                        <label class="form-check-label text-light">
+                            <input type="radio" class="form-check-input " @(Model.Votes.Min(x => x.Id) == i.Id ? "checked" : "") name="country" value="@i.Id">@i.Name
+                        </label>
+                    </div>
+                }
+                <div class="input-group">
+                    <input type="submit" value="Отправить" class="btn btn-success" />
+                </div>
+            </div>
+        }
+    }
+}
